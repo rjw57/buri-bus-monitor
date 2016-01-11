@@ -1,4 +1,4 @@
-update=Sat 09 Jan 2016 13:33:38 GMT
+update=Mon 11 Jan 2016 13:33:13 GMT
 version=1
 last_client=kicad
 [pcbnew]
@@ -60,3 +60,13 @@ LibName28=contrib
 LibName29=valves
 LibName30=lib/buri-bus
 LibName31=lib/arduino
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=plot
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60
