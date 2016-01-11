@@ -1,8 +1,8 @@
 // Firmware for monitor board
 
-#include "debounced_switch.h"
+#include "DebouncedSwitch/debounced_switch.h"
 #include "control.h"
-#include "edge_trigger.h"
+#include "EdgeTrigger/edge_trigger.h"
 #include "globals.h"
 #include "mx7219.h"
 #include "pins.h"
