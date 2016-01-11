@@ -421,9 +421,9 @@ Text Label 5900 3900 2    60   ~ 0
 D4
 Text Label 5500 6600 2    60   ~ 0
 DS1
-Text Label 8500 5050 2    60   ~ 0
+Text Label 6300 4450 0    60   ~ 0
 DS0
-Text Label 8500 5150 2    60   ~ 0
+Text Label 6300 4550 0    60   ~ 0
 ~DOE
 Text Label 10800 4900 2    60   ~ 0
 ~DOE
@@ -827,9 +827,9 @@ NoConn ~ 6700 5050
 NoConn ~ 6700 5150
 Text Label 5500 6400 2    60   ~ 0
 AS1
-Text Label 8500 5250 2    60   ~ 0
+Text Label 6300 4650 0    60   ~ 0
 AS0
-Text Label 8500 5350 2    60   ~ 0
+Text Label 6300 4750 0    60   ~ 0
 ~AOE
 Text Label 8500 4100 2    60   ~ 0
 MISO
@@ -837,16 +837,14 @@ Text Label 8500 4200 2    60   ~ 0
 MOSI
 Text Label 8500 4000 2    60   ~ 0
 SCK
-Text Label 6300 4550 0    60   ~ 0
+Text Label 8500 4950 2    60   ~ 0
 BE
 Text Label 3700 5000 0    60   ~ 0
 RDY
-Text Label 3700 4800 0    60   ~ 0
-SYNC
-Text Label 6300 4650 0    60   ~ 0
-R~W
 Text Label 3700 4900 0    60   ~ 0
-~RST
+SYNC
+Text Label 8500 5150 2    60   ~ 0
+R~W
 Text Label 3700 5400 0    60   ~ 0
 ~IRQ
 $Comp
@@ -980,7 +978,7 @@ Text Label 3700 5650 0    60   ~ 0
 ~CL
 Text Label 3700 5800 0    60   ~ 0
 SCK
-Text Label 8500 4950 2    60   ~ 0
+Text Label 8500 4300 2    60   ~ 0
 ~CL
 Text Label 8800 2000 0    60   ~ 0
 ~VP
@@ -1320,9 +1318,9 @@ Wire Wire Line
 Wire Wire Line
 	5100 6600 5500 6600
 Wire Wire Line
-	8100 5050 8500 5050
+	6700 4450 6300 4450
 Wire Wire Line
-	8100 5150 8500 5150
+	6700 4550 6300 4550
 Wire Wire Line
 	10500 4900 10800 4900
 Wire Wire Line
@@ -1389,9 +1387,9 @@ Wire Wire Line
 Wire Wire Line
 	5100 6400 5500 6400
 Wire Wire Line
-	8100 5250 8500 5250
+	6700 4650 6300 4650
 Wire Wire Line
-	8100 5350 8500 5350
+	6700 4750 6300 4750
 Wire Wire Line
 	8100 4100 8500 4100
 Wire Wire Line
@@ -1399,15 +1397,13 @@ Wire Wire Line
 Wire Wire Line
 	8100 4000 8500 4000
 Wire Wire Line
-	6700 4550 6300 4550
+	8100 4950 8500 4950
 Wire Wire Line
 	4100 5000 3700 5000
 Wire Wire Line
-	4100 4800 3700 4800
-Wire Wire Line
-	6700 4650 6300 4650
-Wire Wire Line
 	4100 4900 3700 4900
+Wire Wire Line
+	8100 5150 8500 5150
 Wire Wire Line
 	4100 5400 3700 5400
 Wire Wire Line
@@ -1512,7 +1508,7 @@ Wire Wire Line
 Wire Wire Line
 	4100 5800 3700 5800
 Wire Wire Line
-	8100 4950 8500 4950
+	8100 4300 8500 4300
 Wire Wire Line
 	9200 2000 8800 2000
 Wire Wire Line
@@ -1550,10 +1546,10 @@ Text Label 3700 5900 0    60   ~ 0
 ~BSS
 Wire Wire Line
 	4100 5900 3700 5900
-Text Label 8500 5450 2    60   ~ 0
+Text Label 8500 4400 2    60   ~ 0
 ~BSS
 Wire Wire Line
-	8100 5450 8500 5450
+	8100 4400 8500 4400
 $Comp
 L 74LS299 U7
 U 1 1 5691124A
@@ -1727,14 +1723,14 @@ Wire Wire Line
 	10100 5300 10200 5300
 Wire Wire Line
 	10100 5250 10100 5300
-Text Label 6300 4750 0    60   ~ 0
+Text Label 8500 5250 2    60   ~ 0
 PHI2
 Wire Wire Line
-	6700 4750 6300 4750
-Text Label 6300 4450 0    60   ~ 0
+	8100 5250 8500 5250
+Text Label 8500 5050 2    60   ~ 0
 ~RST
 Wire Wire Line
-	6700 4450 6300 4450
+	8100 5050 8500 5050
 Text Label 5900 4800 2    60   ~ 0
 MISO
 Wire Wire Line
@@ -1806,8 +1802,6 @@ Wire Wire Line
 	6700 4850 6300 4850
 Text Notes 6500 5250 2    60   ~ 0
 DPY may be\nI2C/TWI like?
-NoConn ~ 8100 4400
-NoConn ~ 8100 4300
 Text Label 9900 5700 2    60   ~ 0
 ~DPYST
 $Comp
@@ -1838,4 +1832,7 @@ Wire Wire Line
 	9200 5700 9300 5700
 Wire Wire Line
 	9200 5650 9200 5700
+NoConn ~ 8100 5350
+NoConn ~ 8100 5450
+NoConn ~ 4100 4800
 $EndSCHEMATC
