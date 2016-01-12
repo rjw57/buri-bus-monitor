@@ -204,17 +204,17 @@ A21
 Text Label 3200 3900 2    60   ~ 0
 A20
 Text Label 1000 3500 0    60   ~ 0
-AS0
+S0
 Text Label 1000 3600 0    60   ~ 0
-AS1
+S1
 Text Label 1000 5000 0    60   ~ 0
-AS0
+S0
 Text Label 1000 5100 0    60   ~ 0
-AS1
+S1
 Text Label 1000 6500 0    60   ~ 0
-AS0
+S0
 Text Label 1000 6600 0    60   ~ 0
-AS1
+S1
 $Comp
 L +5V #PWR05
 U 1 1 5691175C
@@ -361,9 +361,9 @@ $EndComp
 Text Label 1000 3300 0    60   ~ 0
 MOSI
 Text Label 3700 3500 0    60   ~ 0
-DS0
+S0
 Text Label 3700 3600 0    60   ~ 0
-DS1
+S1
 $Comp
 L +5V #PWR011
 U 1 1 569123CC
@@ -419,10 +419,8 @@ Text Label 5900 4000 2    60   ~ 0
 D5
 Text Label 5900 3900 2    60   ~ 0
 D4
-Text Label 5700 6500 2    60   ~ 0
-DS1
 Text Label 6300 4450 0    60   ~ 0
-DS0
+S0
 Text Label 6300 4550 0    60   ~ 0
 ~DOE
 Text Label 2700 1200 2    60   ~ 0
@@ -826,10 +824,8 @@ $EndComp
 NoConn ~ 6700 5050
 NoConn ~ 6700 5150
 Text Label 5700 6400 2    60   ~ 0
-AS1
+S1
 Text Label 6300 4650 0    60   ~ 0
-AS0
-Text Label 6300 4750 0    60   ~ 0
 ~AOE
 Text Label 8500 4100 2    60   ~ 0
 MISO
@@ -1383,8 +1379,6 @@ Wire Wire Line
 Wire Wire Line
 	6700 4650 6300 4650
 Wire Wire Line
-	6700 4750 6300 4750
-Wire Wire Line
 	8100 4100 8500 4100
 Wire Wire Line
 	8100 4200 8500 4200
@@ -1804,8 +1798,6 @@ Wire Wire Line
 	5700 6400 5100 6400
 Wire Wire Line
 	5100 6400 5100 6600
-Wire Wire Line
-	5000 6500 5700 6500
 Connection ~ 5100 6500
 Wire Wire Line
 	5100 6600 5700 6600
@@ -1925,4 +1917,7 @@ F 3 "" H 10200 4800 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 NoConn ~ 4100 5500
+Wire Wire Line
+	5000 6500 5100 6500
+NoConn ~ 6700 4750
 $EndSCHEMATC
