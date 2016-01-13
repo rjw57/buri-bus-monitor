@@ -31,3 +31,6 @@ The SPI exchange protocol is as follows:
    ¬DOE appropriately to assert
    address and/or data bus.
 
+Control bus is sampled on falling edge of ¬BUSSEL. Data and address busses are
+sampled on last rising edge of SCK before ADLOAD goes HIGH.
+
