@@ -204,17 +204,17 @@ A21
 Text Label 3200 3900 2    60   ~ 0
 A20
 Text Label 1000 3500 0    60   ~ 0
-S0
+ADLOAD
 Text Label 1000 3600 0    60   ~ 0
-S1
+BUSSEL
 Text Label 1000 5000 0    60   ~ 0
-S0
+ADLOAD
 Text Label 1000 5100 0    60   ~ 0
-S1
+BUSSEL
 Text Label 1000 6500 0    60   ~ 0
-S0
+ADLOAD
 Text Label 1000 6600 0    60   ~ 0
-S1
+BUSSEL
 $Comp
 L +5V #PWR05
 U 1 1 5691175C
@@ -361,9 +361,9 @@ $EndComp
 Text Label 1000 3300 0    60   ~ 0
 MOSI
 Text Label 3700 3500 0    60   ~ 0
-S0
+ADLOAD
 Text Label 3700 3600 0    60   ~ 0
-S1
+BUSSEL
 $Comp
 L +5V #PWR011
 U 1 1 569123CC
@@ -420,7 +420,7 @@ D5
 Text Label 5900 3900 2    60   ~ 0
 D4
 Text Label 6300 4450 0    60   ~ 0
-S0
+ADLOAD
 Text Label 6300 4550 0    60   ~ 0
 ~DOE
 Text Label 2700 1200 2    60   ~ 0
@@ -823,8 +823,6 @@ F 3 "" H 1350 1200 50  0000 C CNN
 $EndComp
 NoConn ~ 6700 5050
 NoConn ~ 6700 5150
-Text Label 5700 6400 2    60   ~ 0
-S1
 Text Label 6300 4650 0    60   ~ 0
 ~AOE
 Text Label 8500 4100 2    60   ~ 0
@@ -971,7 +969,7 @@ F 3 "" H 7300 2400 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Text Label 3700 5650 0    60   ~ 0
-~CTRLLOAD
+BUSSEL
 Text Label 3700 5800 0    60   ~ 0
 SCK
 Text Label 8800 2000 0    60   ~ 0
@@ -1520,13 +1518,13 @@ Wire Wire Line
 Wire Wire Line
 	4100 4700 3700 4700
 Text Label 3700 6500 0    60   ~ 0
-~BUSSS
+~BUSSEL
 Wire Wire Line
 	4100 6500 3700 6500
 Wire Wire Line
 	4100 5900 3700 5900
 Text Label 8500 4300 2    60   ~ 0
-~BUSSS
+~BUSSEL
 Wire Wire Line
 	8100 4300 8500 4300
 $Comp
@@ -1792,15 +1790,6 @@ Wire Wire Line
 	1100 1550 1100 1600
 NoConn ~ 8100 5350
 NoConn ~ 8100 5450
-Text Label 5700 6600 2    60   ~ 0
-~CTRLLOAD
-Wire Wire Line
-	5700 6400 5100 6400
-Wire Wire Line
-	5100 6400 5100 6600
-Connection ~ 5100 6500
-Wire Wire Line
-	5100 6600 5700 6600
 $Comp
 L 74LS125 U10
 U 1 1 56952A72
@@ -1839,7 +1828,7 @@ Wire Wire Line
 Wire Wire Line
 	9850 4600 8900 4600
 Text Label 8900 4600 0    60   ~ 0
-~BUSSS
+~BUSSEL
 Text Label 3700 5900 0    60   ~ 0
 ~BUSSS
 Text Label 8900 4200 0    60   ~ 0
@@ -1917,7 +1906,9 @@ F 3 "" H 10200 4800 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 NoConn ~ 4100 5500
-Wire Wire Line
-	5000 6500 5100 6500
 NoConn ~ 6700 4750
+Text Label 5400 6500 2    60   ~ 0
+BUSSEL
+Wire Wire Line
+	5000 6500 5400 6500
 $EndSCHEMATC
