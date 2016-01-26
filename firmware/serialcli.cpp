@@ -161,12 +161,14 @@ static SerialState readingUploadState(byte ch) {
 
 static void printHelp() {
     Serial.println("?           - show brief help message");
+#if 0
     Serial.println("p[rint]     - print current address/data bus");
     Serial.println("h[alt]      - toggle halt state");
     Serial.println("c[ycle] [n] - single cycle n times");
     Serial.println("s[tep] [n]  - single step n times");
     Serial.println("reset       - toggle ~RST line");
     Serial.println("b[e]        - toggle BE line");
+#endif
     Serial.println("");
     Serial.println("Specify decimal numbers with no prefix.");
     Serial.println("Specify hexadecimal numbers with $ prefix.");
@@ -244,6 +246,7 @@ static bool parseLong(const char* s, long* l) {
     return (s[0] != '\0') && (*end_ptr == '\0');
 }
 
+#if 0
 // Parse and perform a single cycle/instruction command.
 static void performStepCommand(bool is_inst_step) {
     long n=1; // default
@@ -267,7 +270,9 @@ static void performStepCommand(bool is_inst_step) {
         }
     }
 }
+#endif
 
+#if 0
 // Handle "addr (off | <address>)" command for asserting address bus.
 static void performAssertAddress() {
     const char* arg1 = reinterpret_cast<const char*>(cmd_tokenv[1]);
@@ -285,7 +290,9 @@ static void performAssertAddress() {
         assert_address = false;
     }
 }
+#endif
 
+#if 0
 // Handle "data (off | <value>)" command for asserting data bus.
 static void performAssertData() {
     const char* arg1 = reinterpret_cast<const char*>(cmd_tokenv[1]);
@@ -303,7 +310,9 @@ static void performAssertData() {
         assert_data = false;
     }
 }
+#endif
 
+#if 0
 // perform the "write <addr> <val>" command
 static void performWrite() {
     const char* arg1 = reinterpret_cast<const char*>(cmd_tokenv[1]);
@@ -326,7 +335,9 @@ static void performWrite() {
     writeMem(a, d);
     stopMem();
 }
+#endif
 
+#if 0
 // perform the "read <addr>" command
 static void performRead() {
     const char* arg1 = reinterpret_cast<const char*>(cmd_tokenv[1]);
@@ -346,7 +357,9 @@ static void performRead() {
     Serial.print(d, HEX);
     Serial.println("");
 }
+#endif
 
+#if 0
 static void performDump() {
     const char* arg1 = reinterpret_cast<const char*>(cmd_tokenv[1]);
     const char* arg2 = reinterpret_cast<const char*>(cmd_tokenv[2]);
@@ -399,6 +412,7 @@ static void performDump() {
         Serial.println("");
     }
 }
+#endif
 
 static SerialState startUploadPrompt() {
     const char* arg1 = reinterpret_cast<const char*>(cmd_tokenv[1]);
@@ -435,6 +449,7 @@ static SerialState processCommand() {
     } else if(strprefixeq(cmd, "?") && (n_tokens == 1)) {
         // If help command was given, print help
         printHelp();
+#if 0
     } else if(strprefixeq(cmd, "halt") && (n_tokens == 1)) {
         halt = !halt;
         Serial.print("halt ");
@@ -477,6 +492,7 @@ static SerialState processCommand() {
         performDump();
     } else if(strprefixeq(cmd, "upload") && (n_tokens == 2)) {
         return startUploadPrompt();
+#endif
     } else {
         Serial.println("unknown command");
         printHelp();

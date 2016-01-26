@@ -3,29 +3,28 @@
 #ifndef GUARD_PINS_H__
 #define GUARD_PINS_H__
 
-#define MISO            3
-#define MOSI            2
-#define SCLK            4
-#define PIN_ILOADBAR    5
-#define DLOAD           8
+// Direct observation/assertion of control lines.
+const int PIN_PHI2      = 2;
+const int PIN_R_WBAR    = 3;
+const int PIN_RSTBAR    = 4;
+const int PIN_BE        = 5;
 
-#define PIN_HALT        6
-#define PIN_STEP        7
+// Halt and single-cycle step.
+const int PIN_HALT      = 6;
+const int PIN_STEP      = 7;
 
-#define BTN_MODE        12
-#define BTN_SELECT      11
+// Display select
+const int PIN_DPYSSBAR  = 9;
 
-// The following pins are INPUT or OUTPUT depending on whether the
-// corresponding control lines are being pulled low or not.
-#define PIN_RSTBAR      A0
-#define PIN_BE          A1
-#define PIN_RWBAR       A2
+// Bus select and control
+const int PIN_BUSSSBAR  = 10;
+const int PIN_ADLOAD    = A0;
+const int PIN_DOEBAR    = A1;
+const int PIN_AOEBAR    = A2;
 
-// The following pins are used to control the output stage for asserting values
-// on the bus.
-#define PIN_DTAOEBAR    9
-#define PIN_ADROEBAR    10
-#define PIN_RCLK        13
-
+// SPI
+const int PIN_MOSI      = 11;
+const int PIN_MISO      = 12;
+const int PIN_SCK       = 13;
 
 #endif // GUARD_PINS_H__
