@@ -8,7 +8,7 @@ class EdgeTrigger {
 public:
     enum Edge { RisingEdge, FallingEdge };
 
-    EdgeTrigger(Edge trigger = RisingEdge, int initialState = LOW)
+    EdgeTrigger(Edge trigger = RisingEdge, int initialState = 0)
         : trigger_(trigger), previousState_(initialState)
         , triggered_(false)
     { }
@@ -16,8 +16,8 @@ public:
     void update(int state) {
         if(state != previousState_)
         {
-            if(((state == LOW) && (trigger_ == FallingEdge)) ||
-                    ((state == HIGH) && (trigger_ == RisingEdge)))
+            if((!state && (trigger_ == FallingEdge)) ||
+                    (state && (trigger_ == RisingEdge)))
             {
                 triggered_ = true;
             }

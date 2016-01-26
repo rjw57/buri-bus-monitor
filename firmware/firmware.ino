@@ -2,6 +2,9 @@
 #include <SPI.h>
 #include <stdint.h>
 
+#include "DebouncedSwitch/debounced_switch.h"
+#include "EdgeTrigger/edge_trigger.h"
+
 #include "mx7219.h"
 #include "pins.h"
 #include "serialcli.h"
@@ -58,8 +61,10 @@ struct SwitchState {
 
 BusState bus_state;
 SwitchState panel_switches;
-
 SerialState serial_state;
+
+DebouncedSwitch halt_switch, cycle_switch, instr_switch;
+EdgeTrigger cycle_trigger, instr_trigger;
 
 static void init_display();
 static void update_display();
@@ -119,13 +124,38 @@ void loop() {
     update_bus();
     update_display();
 
-    digitalWrite(PIN_HALT, panel_switches.flags.halt ? HIGH : LOW);
-
     if(panel_switches.flags.reset) {
         digitalWrite(PIN_RSTBAR, LOW);
         pinMode(PIN_RSTBAR, OUTPUT);
     } else {
         pinMode(PIN_RSTBAR, INPUT);
+    }
+
+    halt_switch.poll(panel_switches.flags.halt == HIGH);
+    cycle_switch.poll(panel_switches.flags.cycle_step);
+    cycle_trigger.update(cycle_switch.state());
+    instr_switch.poll(panel_switches.flags.instuction_step);
+    instr_trigger.update(instr_switch.state());
+
+    digitalWrite(PIN_HALT, halt_switch.state() ? HIGH : LOW);
+
+    if(cycle_trigger.triggered()) {
+        if(halt_switch.state()) {
+            digitalWrite(PIN_STEP, HIGH);
+            digitalWrite(PIN_STEP, LOW);
+        }
+        cycle_trigger.clear();
+    }
+
+    if(instr_trigger.triggered()) {
+        if(halt_switch.state()) {
+            do {
+                digitalWrite(PIN_STEP, HIGH);
+                digitalWrite(PIN_STEP, LOW);
+                update_bus();
+            } while(!bus_state.ro_control.flags.sync);
+        }
+        instr_trigger.clear();
     }
 
     /*
