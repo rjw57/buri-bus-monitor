@@ -51,7 +51,7 @@ struct SwitchState {
             unsigned halt : 1;
             unsigned reset : 1;
 
-            unsigned address : 24;
+            unsigned long address : 24;
         } flags;
         struct {
             byte ctrl, a0_7, a8_15, a16_24;
@@ -63,14 +63,37 @@ BusState bus_state;
 SwitchState panel_switches;
 SerialState serial_state;
 
-DebouncedSwitch halt_switch, cycle_switch, instr_switch;
-EdgeTrigger cycle_trigger, instr_trigger;
+DebouncedSwitch halt_switch, cycle_switch, instr_switch, ex_switch,
+                ex_nx_switch, dpst_switch, dpst_nx_switch;
+EdgeTrigger halt_trigger, resume_trigger(EdgeTrigger::FallingEdge),
+            cycle_trigger, instr_trigger, ex_trigger, ex_nx_trigger,
+            dpst_trigger, dpst_nx_trigger;
+
+bool owning_bus = false;
+uint32_t cursor_addr = 0x0;
 
 static void init_display();
 static void update_display();
 static void poll_serial();
-static void update_bus();
+static void update_bus(bool do_load = true);
 static byte dpy_transfer(byte mx7219_reg, byte mx7219_val, byte key_out = 0);
+
+static void claim_bus() {
+    digitalWrite(PIN_BE, LOW);
+    digitalWrite(PIN_R_WBAR, HIGH);
+    pinMode(PIN_R_WBAR, OUTPUT);
+    pinMode(PIN_BE, OUTPUT);
+    digitalWrite(PIN_AOEBAR, LOW);
+    owning_bus = true;
+}
+
+static void release_bus() {
+    pinMode(PIN_BE, INPUT);
+    pinMode(PIN_R_WBAR, INPUT);
+    digitalWrite(PIN_AOEBAR, HIGH);
+    digitalWrite(PIN_DOEBAR, HIGH);
+    owning_bus = false;
+}
 
 void setup() {
     // Reset while setting up other pins.
@@ -132,15 +155,38 @@ void loop() {
     }
 
     halt_switch.poll(panel_switches.flags.halt == HIGH);
+    halt_trigger.update(halt_switch.state());
+    resume_trigger.update(halt_switch.state());
+
     cycle_switch.poll(panel_switches.flags.cycle_step);
     cycle_trigger.update(cycle_switch.state());
     instr_switch.poll(panel_switches.flags.instuction_step);
     instr_trigger.update(instr_switch.state());
 
-    digitalWrite(PIN_HALT, halt_switch.state() ? HIGH : LOW);
+    ex_switch.poll(panel_switches.flags.examine);
+    ex_trigger.update(ex_switch.state());
+    ex_nx_switch.poll(panel_switches.flags.examine_next);
+    ex_nx_trigger.update(ex_nx_switch.state());
+    dpst_switch.poll(panel_switches.flags.deposit);
+    dpst_trigger.update(dpst_switch.state());
+    dpst_nx_switch.poll(panel_switches.flags.deposit_next);
+    dpst_nx_trigger.update(dpst_nx_switch.state());
+
+    if(halt_trigger.triggered()) {
+        digitalWrite(PIN_HALT, HIGH);
+        update_bus();
+        cursor_addr = bus_state.address;
+        halt_trigger.clear();
+    }
+
+    if(resume_trigger.triggered()) {
+        if(owning_bus) { release_bus(); }
+        digitalWrite(PIN_HALT, LOW);
+        resume_trigger.clear();
+    }
 
     if(cycle_trigger.triggered()) {
-        if(halt_switch.state()) {
+        if(!owning_bus && halt_switch.state()) {
             digitalWrite(PIN_STEP, HIGH);
             digitalWrite(PIN_STEP, LOW);
         }
@@ -148,7 +194,7 @@ void loop() {
     }
 
     if(instr_trigger.triggered()) {
-        if(halt_switch.state()) {
+        if(!owning_bus && halt_switch.state()) {
             do {
                 digitalWrite(PIN_STEP, HIGH);
                 digitalWrite(PIN_STEP, LOW);
@@ -156,6 +202,68 @@ void loop() {
             } while(!bus_state.ro_control.flags.sync);
         }
         instr_trigger.clear();
+    }
+
+    if(ex_trigger.triggered()) {
+        if(halt_switch.state()) {
+            claim_bus();
+            cursor_addr = panel_switches.flags.address;
+            bus_state.address = cursor_addr;
+            update_bus(false);
+        }
+        ex_trigger.clear();
+    }
+
+    if(ex_nx_trigger.triggered()) {
+        if(halt_switch.state()) {
+            claim_bus();
+            cursor_addr ++;
+            bus_state.address = cursor_addr;
+            update_bus(false);
+        }
+        ex_nx_trigger.clear();
+    }
+
+    if(dpst_trigger.triggered()) {
+        if(halt_switch.state()) {
+            claim_bus();
+            bus_state.address = cursor_addr;
+            update_bus(false);
+
+            // Now assert data bus
+            digitalWrite(PIN_R_WBAR, LOW);
+            digitalWrite(PIN_DOEBAR, LOW);
+
+            bus_state.address = cursor_addr;
+            bus_state.data = panel_switches.vals.a0_7;
+            update_bus(false);
+
+            digitalWrite(PIN_R_WBAR, HIGH);
+            digitalWrite(PIN_DOEBAR, HIGH);
+        }
+        dpst_trigger.clear();
+    }
+
+    if(dpst_nx_trigger.triggered()) {
+        if(halt_switch.state()) {
+            claim_bus();
+
+            cursor_addr++;
+            bus_state.address = cursor_addr;
+            update_bus(false);
+
+            // Now assert data bus
+            digitalWrite(PIN_R_WBAR, LOW);
+            digitalWrite(PIN_DOEBAR, LOW);
+
+            bus_state.address = cursor_addr;
+            bus_state.data = panel_switches.vals.a0_7;
+            update_bus(false);
+
+            digitalWrite(PIN_R_WBAR, HIGH);
+            digitalWrite(PIN_DOEBAR, HIGH);
+        }
+        dpst_nx_trigger.clear();
     }
 
     /*
@@ -199,11 +307,11 @@ static void update_display() {
     byte digit4 = 0, digit5 = 0;
 
     dpy_transfer(MX7219_DIGIT_0 + 0, bus_state.data, 0x1);
-    panel_switches.vals.a0_7 = 
+    panel_switches.vals.a0_7 =
         dpy_transfer(MX7219_DIGIT_0 + 1, bus_state.address & 0xff, 0x2);
-    panel_switches.vals.a8_15 = 
+    panel_switches.vals.a8_15 =
         dpy_transfer(MX7219_DIGIT_0 + 2, (bus_state.address >> 8) & 0xff, 0x4);
-    panel_switches.vals.a16_24 = 
+    panel_switches.vals.a16_24 =
         dpy_transfer(MX7219_DIGIT_0 + 3, (bus_state.address >> 16) & 0xff, 0x8);
 
     digit4 |= bus_state.ro_control.flags.rdy ? (1 << 0) : 0;
@@ -222,30 +330,32 @@ static void update_display() {
     dpy_transfer(MX7219_DIGIT_0 + 5, digit5);
 }
 
-static void update_bus() {
+static void update_bus(bool do_load) {
+    BusState new_state = bus_state;
+
     SPI.beginTransaction(SPISettings(SPI_SPEED, MSBFIRST, SPI_MODE0));
 
     // Load Addr and Data busses into shift reg.
     digitalWrite(PIN_ADLOAD, HIGH);
     digitalWrite(PIN_BUSSSBAR, LOW);
-    // "transfer" a byte to ensure at least one SCK +ve going edge. The Data and
-    // Address buses are sampled at this point.
+    // "transfer" a byte to ensure at least one SCK +ve going edge. The Data
+    // and Address buses are sampled at this point.
     SPI.transfer(0);
     digitalWrite(PIN_BUSSSBAR, HIGH);
     digitalWrite(PIN_ADLOAD, LOW);
 
     // Exchange bytes over SPI. Control bus is sampled at this point.
     digitalWrite(PIN_BUSSSBAR, LOW);
-    bus_state.ro_control.val = SPI.transfer(0) & 0b1111111;
-    bus_state.data = SPI.transfer(bus_state.data);
+    new_state.ro_control.val = SPI.transfer(0) & 0b1111111;
+    new_state.data = SPI.transfer(bus_state.data);
 
     uint32_t prev_addr = bus_state.address;
-    bus_state.address = 0;
-    bus_state.address |=
+    new_state.address = 0;
+    new_state.address |=
         ((uint32_t)(SPI.transfer((prev_addr >> 16) & 0xff))) << 16;
-    bus_state.address |=
+    new_state.address |=
         ((uint32_t)(SPI.transfer((prev_addr >> 8) & 0xff))) << 8;
-    bus_state.address |=
+    new_state.address |=
         (uint32_t)(SPI.transfer(prev_addr & 0xff));
 
     // Transfer contents of Address and Data shift reg to output.
@@ -257,10 +367,12 @@ static void update_bus() {
     SPI.endTransaction();
 
     // Read pins
-    bus_state.rw_control.flags.be = (digitalRead(PIN_BE) == HIGH) ? 1 : 0;
-    bus_state.rw_control.flags.rstbar = (digitalRead(PIN_RSTBAR) == HIGH) ? 1 : 0;
-    bus_state.rw_control.flags.r_wbar = (digitalRead(PIN_R_WBAR) == HIGH) ? 1 : 0;
-    bus_state.rw_control.flags.phi2 = (digitalRead(PIN_PHI2) == HIGH) ? 1 : 0;
+    new_state.rw_control.flags.be = (digitalRead(PIN_BE) == HIGH) ? 1 : 0;
+    new_state.rw_control.flags.rstbar = (digitalRead(PIN_RSTBAR) == HIGH) ? 1 : 0;
+    new_state.rw_control.flags.r_wbar = (digitalRead(PIN_R_WBAR) == HIGH) ? 1 : 0;
+    new_state.rw_control.flags.phi2 = (digitalRead(PIN_PHI2) == HIGH) ? 1 : 0;
+
+    if(do_load) { bus_state = new_state; }
 }
 
 static void poll_serial() {
